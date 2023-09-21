@@ -30,11 +30,12 @@
 </template>
 
 <script>
-	import TextInput from './forms/TextInput.vue'
-	import FormTag from './forms/FormTag.vue'
+	import TextInput from './forms/TextInput.vue';
+	import FormTag from './forms/FormTag.vue';
 	import { store } from "./store";
 	import router from "../router";
-	import notie from 'notie'
+	import notie from 'notie';
+	import Security from "./security";
 	
 	export default {
 		name: 'Login',
@@ -58,12 +59,12 @@
 					password: this.password,
 				}
 				
-				const requestOptions = {
+				/*const requestOptions = {
 					method: "POST",
 					body: JSON.stringify(payload),
-				}
+				}*/
 				
-				fetch("http://localhost:8081/users/login", requestOptions)
+				fetch(process.env.VUE_APP_API + "/users/login", Security.requestOptions(payload))
 					.then((response) => response.json())
 					.then((response) => {
 						if (response.error) {
@@ -77,6 +78,27 @@
 						} else {
 							console.log("Token:", response.data.token.token);
 							store.token = response.data.token.token;
+							
+							store.user = {
+								id: response.data.user.id,
+								first_name: response.data.user.first_name,
+								last_name: response.data.user.last_name,
+								email: response.data.user.email,
+							}
+							
+							// Save info to cookie
+							let date = new Date();
+							let expdays = 1;
+							date.setTime(date.getTime() + (expdays * 24 * 60 * 60 * 1000));
+							const expires = "expires=" + date.toUTCString();
+							
+							// Set the cookie
+							document.cookie = "_site_data"
+									+ JSON.stringify(response.data)
+							+ "; "
+							+ expires
+							+ "; path=/; SameSite=strict; Secure;"
+							
 							router.push("/");
 						}
 					})

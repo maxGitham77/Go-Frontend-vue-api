@@ -24,7 +24,7 @@
 					<transition-group class="p-3 d-flex flex-wrap" tag="div" name="books">
 						<div v-for="book in this.books" :key="book.id">
 							<div class="card me-2 ms-1 mb-3" style="width: 10rem;"
-							     v-if="book.genres.includes(currentFilter) || currentFilter === 0">
+							     v-if="book.genre_ids.includes(currentFilter) || currentFilter === 0">
 								<img :src="`${this.imgPath}/covers/${book.slug}.jpg`" class="card-img-top"
 								     :alt="`cover for ${book.title}`">
 								<div class="card-body text-center">
